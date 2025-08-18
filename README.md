@@ -33,7 +33,7 @@ BATCH_SIZE = 64
 NORMALIZE = False
 FP16 = False
 
-2. textcliptc12.py
+### 2. textcliptc12.py
 Extracts sentence-level text embeddings from the XML annotation files using CLIP text encoder. Two modes are supported:
 
 avg – average sentence embeddings
@@ -52,7 +52,7 @@ ENCODE_MODE = "avg" or "concat"
 MAX_SENT = 5
 FP16 = False
 
-3. labeltc12.py
+### 3. label_tc12_vocab255.py
 Generates multi-label one-hot vectors based on words extracted from the <DESCRIPTION> tag.
 
 Preprocessing includes:
@@ -87,15 +87,15 @@ vocab255: list of top-K visual concepts
 Y_multi: multi-hot label matrix [N × K]
 feats: image or text features from CLIP
 
-Dependencies
+###Dependencies
 pip install numpy scipy tqdm
 pip install git+https://github.com/openai/CLIP.git
 Also requires: torch, Pillow for image loading, matplotlib (optional).
 
-Citation
+###Citation
 If you use this codebase, please cite the IAPR TC-12 benchmark and CLIP.
 
-Example Use Cases
+###Example Use Cases
 Multimodal representation learning
 Visual concept tagging
 Image-text retrieval
