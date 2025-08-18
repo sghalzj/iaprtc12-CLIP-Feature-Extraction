@@ -6,7 +6,7 @@ import clip
 from tqdm import tqdm
 import scipy.io as sio
 
-# 配置
+
 IMG_DIR = r"S:\dataset\iaprtc12\unpack\iaprtc12\images"
 OUT_DIR = r"S:\SCH-main"
 MODEL_NAME = "ViT-B/16"
