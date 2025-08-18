@@ -20,7 +20,7 @@ dataset/
 
 ## 🧩 Scripts Overview
 
-### 1. `encode_image_clip.py`
+### 1. `imagecliptc12.py`
 
 Extracts image embeddings using [CLIP](https://github.com/openai/CLIP) vision model (`ViT-B/16` by default).
 
