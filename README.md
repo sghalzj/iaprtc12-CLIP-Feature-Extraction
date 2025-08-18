@@ -53,6 +53,7 @@ Extracts sentence-level text embeddings from the XML annotation files using CLIP
 ```python
 ENCODE_MODE = "avg" or "concat"
 MAX_SENT = 5
+NORMALIZE = False
 FP16 = False
 ```
 
