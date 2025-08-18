@@ -1,7 +1,7 @@
 
 # IAPR TC-12 Feature Extraction and Label Generation Toolkit
 
-This repository provides a complete pipeline for processing the [IAPR TC-12](https://www.imageclef.org/photodata) image dataset, including:
+This repository provides a complete pipeline for processing the [IAPR TC-12](https://www.imageclef.org/photodata) dataset, including:
 - CLIP-based image and text feature extraction
 - Multi-label annotation generation from textual descriptions
 - Compatibility with downstream multimodal learning tasks
