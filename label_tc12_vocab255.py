@@ -62,17 +62,16 @@ DEFAULT_STOPWORDS = {
     # 常见词汇
     "get", "got", "go", "goes", "going", "went", "come", "came", "see", "saw", "say", "said",
     "know", "knew", "think", "thought", "take", "took", "make", "made", "use", "used",
-    "team",  # 保留，因为不在词语列表中
-    "brown", "blue", "yellow", "pink",  # 保留这些颜色，因为它们不在词语列表中
+    "team",   
+    "brown", "blue", "yellow", "pink",  
     "up", "down", "out", "off", "around", "some", "many", "few",
     "several", "both", "large", "small", "long", "short", "steep",
-    "flat", "little", "big",  # 移除了重复的 "high", "low"
-    "flowers", "leaves",  # 保留，使用复数形式
+    "flat", "little", "big",  
+    "flowers", "leaves",  
 
     # 数字单词
     "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
 
-    # 动作状态词（移除了在词语列表中出现的）
     "posing", "walking", "lying", "dancing", "eating",
     "surrounded", "covered", "illuminated", "burning",
 }
