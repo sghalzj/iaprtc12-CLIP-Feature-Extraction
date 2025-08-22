@@ -6,69 +6,80 @@ import clip
 from tqdm import tqdm
 import scipy.io as sio
 
+# 配置路径
+IMG_DIR = "S:\dataset\IAPR-TC-12\images"  # 图像文件夹路径
+OUT_DIR = r"S:\SCH-main"  # 输出目录
+MODEL_NAME = "ViT-B/16"  # 使用的CLIP模型
+BATCH_SIZE = 64  # 批量大小
+NORMALIZE = False  # 是否归一化特征
 
-IMG_DIR = r"S:\dataset\iaprtc12\unpack\iaprtc12\images"
-OUT_DIR = r"S:\SCH-main"
-MODEL_NAME = "ViT-B/16"
-BATCH_SIZE = 64
-NORMALIZE = False
-FP16 = False
+# 直接获取图像路径
+def collect_all_images(img_dir):
+    img_paths = []
+    img_keys = []
+    for file in sorted(os.listdir(img_dir)):
+        if file.lower().endswith((".jpg", ".jpeg", ".png", ".bmp")):
+            full_path = os.path.join(img_dir, file)
+            key = os.path.splitext(file)[0]  # 使用文件名作为 key
+            img_paths.append(full_path)
+            img_keys.append(key)
+    return img_keys, img_paths
 
-def collect_images(img_dir):
-    keys, paths = [], []
-    for folder in sorted(os.listdir(img_dir)):
-        sub_dir = os.path.join(img_dir, folder)
-        if not os.path.isdir(sub_dir): continue
-        for file in sorted(os.listdir(sub_dir)):
-            if file.lower().endswith((".jpg", ".jpeg", ".png", ".bmp")):
-                keys.append(f"{folder}/{os.path.splitext(file)[0]}")
-                paths.append(os.path.join(sub_dir, file))
-    return keys, paths
-
-def load_tensor(path, preprocess):
-    try:
-        return preprocess(Image.open(path).convert("RGB"))
-    except Exception:
-        return None
-
+# 主流程
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
-    keys, paths = collect_images(IMG_DIR)
-    print(f"Collected {len(keys)} images.")
+
+    # 收集所有图像路径和键
+    keys, paths = collect_all_images(IMG_DIR)
+    N = len(paths)
+    print(f"Collected {N} images.")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Loading CLIP {MODEL_NAME} on {device} ...")
     model, preprocess = clip.load(MODEL_NAME, device=device)
-    if FP16 and device == "cuda": model = model.half()
     model.eval()
 
-    feats = np.zeros((len(keys), 512), dtype=np.float32)
-    bad, batch_imgs, batch_idx = [], [], []
+    feats = np.zeros((N, 512), dtype=np.float32)
+    bad = []
 
-    for i, path in enumerate(tqdm(paths, desc="Encoding images")):
-        img_tensor = load_tensor(path, preprocess)
-        if img_tensor is None:
+    def load_tensor(p):
+        try:
+            img = Image.open(p).convert("RGB")
+            t = preprocess(img)
+            return t
+        except Exception:
+            return None
+
+    batch_imgs, batch_idx = [], []
+    for i, p in enumerate(tqdm(paths, desc="Encoding images")):
+        t = load_tensor(p)
+        if t is None:
             bad.append(i)
             continue
-        batch_imgs.append(img_tensor)
+        batch_imgs.append(t)
         batch_idx.append(i)
 
-        if len(batch_imgs) == BATCH_SIZE or i == len(keys) - 1:
+        if len(batch_imgs) == BATCH_SIZE or i == N - 1:
             x = torch.stack(batch_imgs).to(device)
-            if FP16 and device == "cuda": x = x.half()
-            with torch.no_grad(): feat = model.encode_image(x).float().cpu().numpy()
+            with torch.no_grad():
+                feat = model.encode_image(x)
+            feat = feat.float().cpu().numpy()
             if NORMALIZE:
-                feat /= (np.linalg.norm(feat, axis=1, keepdims=True) + 1e-12)
+                norm = np.linalg.norm(feat, axis=1, keepdims=True) + 1e-12
+                feat = feat / norm
             for j, idx in enumerate(batch_idx):
                 feats[idx] = feat[j]
             batch_imgs, batch_idx = [], []
 
-    np.savez_compressed(os.path.join(OUT_DIR, "clip_vitb16_image_embeds_ordered.npz"),
-                        keys=np.array(keys), feats=feats, missing=np.array(bad, dtype=np.int32))
-    sio.savemat(os.path.join(OUT_DIR, "clip_vitb16_image_embeds_ordered.mat"),
-                {"keys": keys, "feats": feats, "missing": np.array(bad, dtype=np.int32)},
+    # 保存特征
+    out_npz = os.path.join(OUT_DIR, "clip_vitb16_image_embeds.npz")
+    out_mat = os.path.join(OUT_DIR, "clip_vitb16_image_embeds.mat")
+    np.savez_compressed(out_npz, keys=np.array(keys), feats=feats, missing=np.array(bad, dtype=np.int32))
+    sio.savemat(out_mat, {"keys": keys, "feats": feats, "missing": np.array(bad, dtype=np.int32)},
                 do_compression=True)
 
-    print(f"Saved features. Missing: {len(bad)} images.")
+    print(f"Saved:\n  {out_npz}\n  {out_mat}")
+    print(f"Missing images: {len(bad)}")
 
 if __name__ == "__main__":
     main()
