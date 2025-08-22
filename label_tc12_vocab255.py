@@ -13,62 +13,68 @@ TOP_K = 255
 EXT_FILTER = {'.eng'}
 
 DEFAULT_STOPWORDS = {
-    # 冠词 (Articles)
+    # ===== 核心语法词（必须过滤）=====
+    # 冠词
     "a", "an", "the",
 
-    # 最常用代词 (Pronouns)
+    # 代词
     "i", "me", "my", "myself", "we", "us", "our", "ours", "ourselves",
     "you", "your", "yours", "yourself", "yourselves",
     "he", "him", "his", "himself", "she", "her", "hers", "herself",
     "it", "its", "itself", "they", "them", "their", "theirs", "themselves",
 
-    # 指示词和不定代词 (Demonstratives & Indefinite Pronouns)
-    "this", "that", "these", "those",
-    "what", "which", "who", "whom", "whose",
-    "other", "another", "same", "such",
+    # 基础系动词和助动词
+    "is", "are", "was", "were", "be", "being", "been",
+    "have", "has", "had", "having", "do", "does", "did", "doing",
+    "can", "could", "will", "would", "shall", "should", "may", "might", "must",
 
-    # 介词 (Prepositions)
+    # 基本介词和连词
+    "and", "or", "but", "nor", "so", "yet",
+    "if", "because", "although", "since", "unless", "while", "where", "when", "as",
     "about", "above", "across", "after", "against", "along", "among", "around", "at", "before",
     "behind", "below", "beneath", "beside", "between", "beyond", "by", "down", "during", "for",
     "from", "in", "inside", "into", "near", "of", "off", "on", "onto", "out", "outside", "over",
     "through", "throughout", "to", "toward", "under", "until", "up", "upon", "with", "within", "without",
 
-    # 连词 (Conjunctions)
-    "and", "or", "but", "nor", "so", "yet",
-    "if", "because", "although", "since", "unless", "while", "where", "when", "as",
-
-    # 动词 (Verbs)
-    "is", "are", "was", "were", "be", "being", "been",
-    "have", "has", "had", "having", "do", "does", "did", "doing",
-    "can", "could", "will", "would", "shall", "should", "may", "might", "must",
-
-    # 副词 (Adverbs)
-    "very", "really", "quite", "too", "just", "only", "also", "well", "much", "more", "most",
-    "even", "still", "almost", "enough", "however", "therefore", "thus", "hence",
-    "now", "then", "here", "there", "when", "where", "why", "how",
-
-    # 限定词和数量词 (Determiners & Quantifiers)
+    # ===== 限定词和抽象词 =====
     "all", "any", "each", "every", "no", "none", "some", "lot", "few", "many", "several", "both", "either", "neither",
     "own", "same", "so", "than", "too",
 
-    # 感叹词和其他 (Interjections & Others)
+    # ===== 感叹词和否定词 =====
     "oh", "yes", "no", "not", "ain", "aren", "couldn", "didn", "doesn", "don", "hadn", "hasn",
     "haven", "isn", "mightn", "mustn", "needn", "shan", "shouldn", "wasn", "weren", "won", "wouldn",
 
+    # ===== 过于模糊的形容词副词 =====
+    "very", "really", "quite", "too", "just", "only", "also", "well", "much", "more", "most",
+    "even", "still", "almost", "enough", "however", "therefore", "thus", "hence",
+    "now", "then", "here", "there", "why", "how",
+
+    # ===== IAPRTC12特定过滤 =====
+    # 这些词在数据集中出现频繁但信息量低
+    "image", "images", "photo", "photos", "picture", "pictures",
+    "show", "shows", "shown", "showing", "see", "seen",
+    "look", "looks", "looking", "view", "views", "viewing",
+
+    # 通用动词（在标注中信息量较低）
+    "get", "got", "go", "goes", "going", "went", "come", "came",
+    "take", "took", "make", "made", "use", "used", "know", "knew",
+    "think", "thought", "say", "said", "see", "saw"
     # 常见词汇
     "get", "got", "go", "goes", "going", "went", "come", "came", "see", "saw", "say", "said",
     "know", "knew", "think", "thought", "take", "took", "make", "made", "use", "used",
     "team",  # 保留，因为不在词语列表中
     "brown", "blue", "yellow", "pink",  # 保留这些颜色，因为它们不在词语列表中
-    "next", "behind", "front", "left", "right",  # 保留这些方位词
-    "high", "low", "broad", "narrow",
     "up", "down", "out", "off", "around", "some", "many", "few",
     "several", "both", "large", "small", "long", "short", "steep",
     "flat", "little", "big",  # 移除了重复的 "high", "low"
+    "flowers", "leaves",  # 保留，使用复数形式
 
     # 数字单词
     "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
 
+    # 动作状态词（移除了在词语列表中出现的）
+    "posing", "walking", "lying", "dancing", "eating",
+    "surrounded", "covered", "illuminated", "burning",
 }
 
 
